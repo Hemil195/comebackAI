@@ -1,0 +1,9 @@
+{
+  "name": "comebackai",
+  "version": "1.0.0",
+  "description": "ComeBackAI — A simple AI SDK powered by Google Generative AI",
+  "main": "index.js",
+  "type": "module",
+  "author": "Hemil Patel",
+  "license": "MIT"
+}
