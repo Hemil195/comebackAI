@@ -2,21 +2,23 @@ import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import cors from "cors";
+import apiKeyManager from "./apiKeyManager.js";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const API_KEY = process.env.API_KEY;
-
 // Main AI route
 app.post("/api/generate", async (req, res) => {
   try {
     const { prompt } = req.body;
+    
+    // Get next API key from rotation
+    const apiKey = apiKeyManager.getNextKey();
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
@@ -48,9 +50,12 @@ app.post("/api/generate", async (req, res) => {
 app.get("/api/generate", async (req, res) => {
   try {
     const prompt = req.query.prompt || "Hello, tell me a joke";
+    
+    // Get next API key from rotation
+    const apiKey = apiKeyManager.getNextKey();
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
@@ -76,6 +81,15 @@ app.get("/api/generate", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+// API Key stats endpoint (optional - for monitoring)
+app.get("/api/stats", (req, res) => {
+  const stats = apiKeyManager.getStats();
+  res.json({
+    totalKeys: apiKeyManager.getKeyCount(),
+    keyUsage: stats
+  });
 });
 
 app.listen(process.env.PORT, () => {
