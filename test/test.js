@@ -1,6 +1,5 @@
-import ComeBackAI from "../ComeBackAI-SDK/index.js";
+import ComeBackAI from "comebackai";
 
-// Use your local server instead of the deployed one
-const ai = new ComeBackAI("http://localhost:3000/api/generate");
+const ai = new ComeBackAI();
 const reply = await ai.generate("Tell me a short story about friendship.");
 console.log(reply);

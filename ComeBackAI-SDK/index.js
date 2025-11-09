@@ -10,11 +10,7 @@ export default class ComeBackAI {
       body: JSON.stringify({ prompt })
     });
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error(`Server Error (${res.status}):`, errorText);
-      throw new Error(`Failed to get AI response: ${res.status} ${res.statusText}`);
-    }
+    if (!res.ok) throw new Error("Failed to get AI response");
 
     const data = await res.json();
     return data.output;
